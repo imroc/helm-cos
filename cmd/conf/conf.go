@@ -33,7 +33,11 @@ func getConfig() (Config, error) {
 		return config, nil
 	}
 	filename := getConfigFilename()
-	b, err := ioutil.ReadFile(filename)
+	file, err := os.OpenFile(filename,os.O_CREATE|os.O_RDWR,0666)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	b, err := ioutil.ReadAll(file)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

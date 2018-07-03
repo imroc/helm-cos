@@ -1,0 +1,14 @@
+name: "cos"
+version: "0.1.0"
+usage: "repositories on Tencent Cloud Object Storage"
+description: |-
+  Manage repositories on Tencent Cloud Object Storage
+command: "$HELM_PLUGIN_DIR/bin/helm-cos"
+downloaders:
+- command: "scripts/pull.sh"
+  protocols:
+  - "cos"
+
+hooks:
+  install: "cd $HELM_PLUGIN_DIR; ./scripts/install.sh"
+  update: "cd $HELM_PLUGIN_DIR; ./scripts/install.sh"

@@ -1,5 +1,5 @@
 name: "cos"
-version: "0.1.0"
+version: "0.1.1"
 usage: "repositories on Tencent Cloud Object Storage"
 description: |-
   Manage repositories on Tencent Cloud Object Storage

@@ -1,6 +1,6 @@
 # helm-cos [![Build Status](https://travis-ci.org/nouney/helm-cos.svg?branch=master)](https://travis-ci.org/nouney/helm-cos)
 
-`helm-cos` is a [helm](https://github.com/kubernetes/helm) plugin that allows you to manage private helm repositories on Google Cloud Storage.
+`helm-cos` is a [helm](https://github.com/kubernetes/helm) plugin that allows you to manage private helm repositories on Tencent Cloud Object Storage.
 
 ## Installation
 

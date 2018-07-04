@@ -24,15 +24,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/imroc/helm-cos/pkg/repo"
 	"github.com/spf13/cobra"
-
 )
-
 
 var (
-	flagDebug          bool
+	flagDebug bool
 )
-
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -50,9 +48,11 @@ func Execute() {
 	}
 }
 
-func init() { 
+func init() {
+	cobra.OnInitialize(func() {
+		if flagDebug {
+			repo.Debug = true
+		}
+	})
 	RootCmd.PersistentFlags().BoolVar(&flagDebug, "debug", false, "activate debug")
 }
-
-
-

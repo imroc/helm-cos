@@ -801,7 +801,6 @@ func (client *Client) SetEndpoint(endpoint string) {
 		}
 		client.host = u.Host
 		client.endpoint = link
-		log.Printf("set endpoint:%s host:%s\n", client.endpoint, client.host)
 	}
 }
 

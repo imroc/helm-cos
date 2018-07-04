@@ -24,7 +24,6 @@ func getConfigFilename() string {
 		panic("need env HELM_PLUGIN_DIR")
 	}
 	filename := basedir + string(os.PathSeparator) + "helm-cos.yaml"
-	fmt.Println("config filename:", filename)
 	return filename
 }
 
@@ -42,7 +41,7 @@ func getConfig() (Config, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	err = yaml.Unmarshal(b, config)
+	err = yaml.Unmarshal(b, &config)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -50,15 +49,15 @@ func getConfig() (Config, error) {
 }
 
 func inputCosConfig(bucket string) *CosConfig {
-	fmt.Println("Please login at first, enter your SecretId and SecretKey")
+	println("Please login at first, enter your SecretId and SecretKey")
 	var secretId, secretKey string
 	for {
-		fmt.Print("SecretId:")
+		print("SecretId:")
 		fmt.Scanln(&secretId)
-		fmt.Print("SecretKey:")
+		print("SecretKey:")
 		fmt.Scanln(&secretKey)
 		if secretId == "" || secretKey == "" {
-			fmt.Println("Empty SecretId or SecretKey, please retry")
+			println("Empty SecretId or SecretKey, please retry")
 			continue
 		}
 
@@ -80,7 +79,6 @@ func GetBucketConfig(bucket string) (*CosConfig, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	fmt.Printf("get config: %+v\n",c)
 	cosConfig, ok := c[bucket]
 	if !ok {
 		cosConfig = inputCosConfig(bucket)

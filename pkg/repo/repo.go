@@ -48,7 +48,7 @@ func (r *Repo) checkExsits(file string) (bool, error) {
 	bkt := r.cos.Bucket("")
 	resp, err := bkt.Head(path.Join(r.basePath, file), make(http.Header))
 	if err != nil {
-		return false, errors.WithStack(err)
+		return false,nil
 	}
 	if resp.StatusCode == http.StatusOK {
 		return true, nil

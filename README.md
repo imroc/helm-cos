@@ -18,10 +18,10 @@ $ helm plugin install https://github.com/imroc/helm-cos --version 0.2.0
 
 ```shell
 # Init a new repository
-$ helm cos init gs://bucket/path
+$ helm cos init cos://bucket/path
 
 # Add your repository to Helm
-$ helm repo add repo-name gs://bucket/path
+$ helm repo add repo-name cos://bucket/path
 
 # Push a chart to your repository
 $ helm cos push chart.tar.gz repo-name
@@ -56,7 +56,7 @@ First, you need to [create a bucket on GCS](https://cloud.google.com/storage/doc
 Then you have to initialize a repository at a specific location in your bucket:
 
 ```shell
-$ helm cos init gs://your-bucket/path
+$ helm cos init cos://your-bucket/path
 ```
 
 >   You can create a repository anywhere in your bucket.
@@ -65,7 +65,7 @@ $ helm cos init gs://your-bucket/path
 
 You can now add the repository to helm:
 ```shell
-$ helm repo add my-repository gs://your-bucket/path
+$ helm repo add my-repository cos://your-bucket/path
 ```
 
 ### Push a chart

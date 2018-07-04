@@ -32,8 +32,9 @@ func getConfig() (Config, error) {
 	if config != nil {
 		return config, nil
 	}
+	config = make(Config)
 	filename := getConfigFilename()
-	file, err := os.OpenFile(filename,os.O_CREATE|os.O_RDWR,0666)
+	file, err := os.OpenFile(filename, os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -52,9 +53,9 @@ func inputCosConfig(bucket string) *CosConfig {
 	fmt.Println("Please login at first, enter your SecretId and SecretKey")
 	var secretId, secretKey string
 	for {
-		fmt.Println("SecretId:")
+		fmt.Print("SecretId:")
 		fmt.Scanln(&secretId)
-		fmt.Println("SecretKey:")
+		fmt.Print("SecretKey:")
 		fmt.Scanln(&secretKey)
 		if secretId == "" || secretKey == "" {
 			fmt.Println("Empty SecretId or SecretKey, please retry")
@@ -69,6 +70,7 @@ func inputCosConfig(bucket string) *CosConfig {
 		if err != nil {
 			panic(err)
 		}
+		return cosConfig
 	}
 
 }
@@ -78,6 +80,7 @@ func GetBucketConfig(bucket string) (*CosConfig, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	fmt.Printf("get config: %+v\n",c)
 	cosConfig, ok := c[bucket]
 	if !ok {
 		cosConfig = inputCosConfig(bucket)

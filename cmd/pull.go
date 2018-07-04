@@ -25,8 +25,8 @@ import (
 	"os"
 
 	"fmt"
-	"github.com/spf13/cobra"
 	"github.com/imroc/helm-cos/cmd/conf"
+	"github.com/spf13/cobra"
 	"net/url"
 )
 
@@ -36,7 +36,7 @@ var pullCmd = &cobra.Command{
 	Long: `This command pull a file from COS and prints it to stdout.
 Used by helm to fetch charts from COS.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("pull path:", args[0])
+		fmt.Printf("args: %+v\n", args)
 		u, err := url.Parse(args[0])
 		if err != nil {
 			return err

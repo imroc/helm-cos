@@ -1,30 +1,30 @@
-# helm-gcs [![Build Status](https://travis-ci.org/nouney/helm-gcs.svg?branch=master)](https://travis-ci.org/nouney/helm-gcs)
+# helm-cos [![Build Status](https://travis-ci.org/nouney/helm-cos.svg?branch=master)](https://travis-ci.org/nouney/helm-cos)
 
-`helm-gcs` is a [helm](https://github.com/kubernetes/helm) plugin that allows you to manage private helm repositories on Google Cloud Storage.
+`helm-cos` is a [helm](https://github.com/kubernetes/helm) plugin that allows you to manage private helm repositories on Google Cloud Storage.
 
 ## Installation
 
 Install the latest version:
 ```shell
-$ helm plugin install https://github.com/nouney/helm-gcs
+$ helm plugin install https://github.com/imroc/helm-cos
 ```
 
 Install a specific version:
 ```shell
-$ helm plugin install https://github.com/nouney/helm-gcs --version 0.2.0
+$ helm plugin install https://github.com/imroc/helm-cos --version 0.2.0
 ```
 
 ## Quick start
 
 ```shell
 # Init a new repository
-$ helm gcs init gs://bucket/path
+$ helm cos init gs://bucket/path
 
 # Add your repository to Helm
 $ helm repo add repo-name gs://bucket/path
 
 # Push a chart to your repository
-$ helm gcs push chart.tar.gz repo-name
+$ helm cos push chart.tar.gz repo-name
 
 # Update Helm cache
 $ helm repo update
@@ -33,7 +33,7 @@ $ helm repo update
 $ helm fetch repo-name/chart
 
 # Remove the chart
-$ helm gcs rm chart repo-name
+$ helm cos rm chart repo-name
 ```
 
 ## Documentation
@@ -56,7 +56,7 @@ First, you need to [create a bucket on GCS](https://cloud.google.com/storage/doc
 Then you have to initialize a repository at a specific location in your bucket:
 
 ```shell
-$ helm gcs init gs://your-bucket/path
+$ helm cos init gs://your-bucket/path
 ```
 
 >   You can create a repository anywhere in your bucket.
@@ -79,7 +79,7 @@ This will create a file `my-chart-<semver>.tgz`.
 Now, to push the chart to the repository `my-repository`:
 
 ```shell
-$ helm gcs push my-chart-<semver>.tgz my-repository
+$ helm cos push my-chart-<semver>.tgz my-repository
 ```
 
 If you got this error:
@@ -107,17 +107,17 @@ $ helm fetch my-chart
 You can remove all the versions of a chart from a repository by running:
 
 ```shell
-$ helm gcs remove my-chart my-repository
+$ helm cos remove my-chart my-repository
 ```
 
 To remove a specific version, simply use the `--version` flag:
 
 ```shell
-$ helm gcs remove my-chart my-repository --version 0.1.0
+$ helm cos remove my-chart my-repository --version 0.1.0
 ```
 
 >   Don't forget to run `helm repo up` after you remove a chart.
 
 ## Troubleshooting
 
-You can use the global flag `--debug`, or set `HELM_GCS_DEBUG=true` to get more informations. Please write an issue if you find any bug.
+You can use the global flag `--debug` to get more informations. Please write an issue if you find any bug.

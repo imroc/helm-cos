@@ -125,17 +125,6 @@ func Create(r *Repo) error {
 	return r.uploadIndexFile(i)
 }
 
-//func (r Repo) uploadBytes(key string, rs io.ReadSeeker) error {
-//	bkt := r.cos.Bucket("")
-//	multi, err := bkt.InitMulti(key, "application/octet-stream", cos.Private, cos.Options{})
-//	if err != nil {
-//		return errors.WithStack(err)
-//	}
-//	_, err = multi.PutPart(1, rs)
-//	if err != nil {
-//		return errors.WithStack(err)
-//	}
-//}
 // PushChart adds a chart into the repository.
 //
 // The index file on GCS will be updated and the file at "chartpath" will be uploaded to GCS.

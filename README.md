@@ -40,13 +40,7 @@ $ helm cos rm chart repo-name
 
 ### Authentification
 
-To authenticate against GCS you can:
-
- -   Use the [application default credentials](https://cloud.google.com/sdk/gcloud/reference/auth/application-default/)
-
- -   Use a service account via the global flag `--service-account`
-
-See [the GCP documentation](https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application) for more information.
+TODO
 
 
 ### Create a repository

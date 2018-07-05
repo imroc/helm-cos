@@ -40,7 +40,7 @@ If no specific version is given, all versions will be removed.`,
 		if err != nil {
 			return err
 		}
-		return r.RemoveChart(chart, flagVersion)
+		return r.RemoveChart(chart, repoName, flagVersion)
 	},
 }
 

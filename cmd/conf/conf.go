@@ -48,42 +48,51 @@ func getConfig() (Config, error) {
 	return config, nil
 }
 
-func inputCosConfig(bucket string) *CosConfig {
+func InputCosConfig(bucket string) *CosConfig {
 	println("Please login at first, enter your SecretId and SecretKey")
 	var secretId, secretKey string
-	for {
-		print("SecretId:")
-		fmt.Scanln(&secretId)
-		print("SecretKey:")
-		fmt.Scanln(&secretKey)
-		if secretId == "" || secretKey == "" {
-			println("Empty SecretId or SecretKey, please retry")
-			continue
-		}
-
-		cosConfig := &CosConfig{
-			SecretId:  secretId,
-			SecretKey: secretKey,
-		}
-		err := UpdateBucketConfig(bucket, cosConfig)
-		if err != nil {
-			panic(err)
-		}
-		return cosConfig
+	print("SecretId:")
+	fmt.Scanln(&secretId)
+	print("SecretKey:")
+	fmt.Scanln(&secretKey)
+	if secretId == "" || secretKey == "" {
+		println("Empty SecretId or SecretKey, please retry")
+		return nil
 	}
 
+	cosConfig := &CosConfig{
+		SecretId:  secretId,
+		SecretKey: secretKey,
+	}
+	err := UpdateBucketConfig(bucket, cosConfig)
+	if err != nil {
+		panic(err)
+	}
+	return cosConfig
 }
 
-func GetBucketConfig(bucket string) (*CosConfig, error) {
+func ReadBucketConfig(bucket string) (*CosConfig, error) {
 	c, err := getConfig()
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	cosConfig, ok := c[bucket]
 	if !ok {
-		cosConfig = inputCosConfig(bucket)
+		return nil, nil
 	}
 	return cosConfig, nil
+}
+
+func GetBucketConfig(bucket string) (*CosConfig, error) {
+	c, err := ReadBucketConfig(bucket)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	if c != nil {
+		return c, nil
+	}
+	c = InputCosConfig(bucket)
+	return c, nil
 }
 
 func UpdateBucketConfig(bucket string, cosConfig *CosConfig) error {
@@ -108,6 +117,9 @@ func GetCosClient(endpoint string) (*cos.Client, error) {
 	cosConfig, err := GetBucketConfig(endpoint)
 	if err != nil {
 		return nil, err
+	}
+	if cosConfig == nil {
+		return nil, errors.New("Empty SecretId or SecretKey")
 	}
 	client := &cos.Client{
 		AccessKeyId:     cosConfig.SecretId,

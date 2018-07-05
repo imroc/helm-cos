@@ -48,7 +48,7 @@ func (r *Repo) checkExsits(file string) (bool, error) {
 	bkt := r.cos.Bucket("")
 	resp, err := bkt.Head(path.Join(r.basePath, file), make(http.Header))
 	if err != nil {
-		return false,nil
+		return false, nil
 	}
 	if resp.StatusCode == http.StatusOK {
 		return true, nil
@@ -107,7 +107,7 @@ func Load(name string) (*Repo, error) {
 	}, nil
 }
 
-// Create creates a new repository on GCS.
+// Create creates a new repository on COS.
 // This function is idempotent.
 func Create(r *Repo) error {
 	log := logger()
@@ -127,11 +127,11 @@ func Create(r *Repo) error {
 
 // PushChart adds a chart into the repository.
 //
-// The index file on GCS will be updated and the file at "chartpath" will be uploaded to GCS.
+// The index file on COS will be updated and the file at "chartpath" will be uploaded to COS.
 // If the version of the chart is already indexed, it won't be uploaded unless "force" is set to true.
 // The push will fail if the repository is updated at the same time, use "retry" to automatically reload
 // the index of the repository.
-func (r *Repo) PushChart(chartpath string, force bool) error {
+func (r *Repo) PushChart(chartpath, repoName string, force bool) error {
 	log := logger()
 	i, err := r.indexFile()
 	if err != nil {
@@ -146,7 +146,8 @@ func (r *Repo) PushChart(chartpath string, force bool) error {
 
 	log.Debugf("chart loaded: %s-%s", chart.Metadata.Name, chart.Metadata.Version)
 	if i.Has(chart.Metadata.Name, chart.Metadata.Version) && !force {
-		return fmt.Errorf("chart %s-%s already indexed. Use --force to still upload the chart", chart.Metadata.Name, chart.Metadata.Version)
+		fmt.Printf("chart %s-%s already indexed. Use --force to still upload the chart\n", chart.Metadata.Name, chart.Metadata.Version)
+		return nil
 	}
 
 	if !i.Has(chart.Metadata.Name, chart.Metadata.Version) {
@@ -161,12 +162,18 @@ func (r *Repo) PushChart(chartpath string, force bool) error {
 	if err != nil {
 		return errors.Wrap(err, "write chart")
 	}
+	// update local index file
+	indexFilename := getIndexFilePath(repoName)
+	err = i.WriteFile(indexFilename, 0666)
+	if err != nil {
+		return errors.Wrap(err, "write index")
+	}
 	return nil
 }
 
 // RemoveChart removes a chart from the repository
 // If version is empty, all version will be deleted.
-func (r *Repo) RemoveChart(name, version string) error {
+func (r *Repo) RemoveChart(name, repoName, version string) error {
 	log := logger()
 	log.Debugf("removing chart %s-%s", name, version)
 
@@ -209,18 +216,19 @@ func (r *Repo) RemoveChart(name, version string) error {
 			continue
 		}
 		log.Debugf("delete cos file %s", rawurl)
-		err = bkt.Del(u.Host)
+		err = bkt.Del(u.Path)
 		if err != nil {
 			log.Errorf("failed to remove chart:%s", rawurl)
 			continue
 		}
 	}
+	index.WriteFile(getIndexFilePath(repoName), 0666)
 	return nil
 }
 
 const DefaultContentType = "application/octet-stream"
 
-// uploadIndexFile update the index file on GCS.
+// uploadIndexFile update the index file on COS.
 func (r *Repo) uploadIndexFile(i *repo.IndexFile) error {
 	log := logger()
 	log.Debugf("push index file")
@@ -239,7 +247,7 @@ func (r *Repo) uploadIndexFile(i *repo.IndexFile) error {
 	return nil
 }
 
-// indexFile retrieves the index file from GCS.
+// indexFile retrieves the index file from COS.
 // It will also retrieve the generation number of the file, for optimistic locking.
 func (r *Repo) indexFile() (*repo.IndexFile, error) {
 	log := logger()
@@ -294,6 +302,17 @@ func (r Repo) updateIndexFile(i *repo.IndexFile, chartpath string, chart *chart.
 	return r.uploadIndexFile(i)
 }
 
+func getIndexFilePath(name string) string {
+	log := logger()
+	helmHome := os.Getenv("HELM_HOME")
+	if helmHome == "" {
+		helmHome = environment.DefaultHelmHome
+	}
+	log.Debugf("helm home: %s", helmHome)
+	h := helmpath.Home(helmHome)
+	return h.CacheIndex(name)
+}
+
 func retrieveRepositoryEntry(name string) (*repo.Entry, error) {
 	log := logger()
 	helmHome := os.Getenv("HELM_HOME")
@@ -317,7 +336,7 @@ func retrieveRepositoryEntry(name string) (*repo.Entry, error) {
 func logger() *logrus.Entry {
 	l := logrus.New()
 	level := logrus.InfoLevel
-	if Debug || strings.ToLower(os.Getenv("HELM_GCS_DEBUG")) == "true" {
+	if Debug || strings.ToLower(os.Getenv("HELM_COS_DEBUG")) == "true" {
 		level = logrus.DebugLevel
 	}
 	l.SetLevel(level)

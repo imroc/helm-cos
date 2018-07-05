@@ -610,9 +610,6 @@ func partiallyEscapedPath(path string) string {
 // body will be unmarshalled on it.
 func (client *Client) doHttpRequest(c *http.Client, hreq *http.Request, resp interface{}) (*http.Response, error) {
 
-	if true {
-		log.Printf("%s %s ...\n", hreq.Method, hreq.URL.String())
-	}
 	hresp, err := c.Do(hreq)
 	if err != nil {
 		return nil, err

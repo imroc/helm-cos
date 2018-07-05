@@ -20,13 +20,18 @@ var loginCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		err = conf.UpdateBucketConfig(u.Host, &conf.CosConfig{
-			SecretId:  secretId,
-			SecretKey: secretKey,
-		})
-		if err != nil {
-			return err
+		if secretId != "" && secretKey != "" { // update credentials with the flag
+			err = conf.UpdateBucketConfig(u.Host, &conf.CosConfig{
+				SecretId:  secretId,
+				SecretKey: secretKey,
+			})
+			if err != nil {
+				return err
+			}
+			return nil
 		}
+
+		conf.InputCosConfig(u.Host)
 		return nil
 	},
 }

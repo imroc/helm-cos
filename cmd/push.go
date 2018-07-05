@@ -40,7 +40,11 @@ var pushCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return r.PushChart(chartpath, flagForce)
+		err = r.PushChart(chartpath, repoName, flagForce)
+		if err != nil {
+			return err
+		}
+		return nil
 	},
 }
 

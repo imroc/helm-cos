@@ -45,7 +45,7 @@ TODO
 
 ### Create a repository
 
-First, you need to [create a bucket on GCS](https://cloud.google.com/storage/docs/creating-buckets), which will be used by the plugin to store your charts.
+First, you need to [create a bucket on COS](https://cloud.tencent.com/document/product/436/6232), which will be used by the plugin to store your charts.
 
 Then you have to initialize a repository at a specific location in your bucket:
 

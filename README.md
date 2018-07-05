@@ -94,7 +94,6 @@ $ helm fetch my-chart
 
 >   This command does nothing if the same chart (name and version) already exists.
 
->   Using `--retry` is highly recommended in a CI/CD environment.
 
 ### Remove a chart
 

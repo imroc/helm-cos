@@ -7,6 +7,8 @@ import (
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"os"
+	"syscall"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 type CosConfig struct {
@@ -54,7 +56,12 @@ func InputCosConfig(bucket string) *CosConfig {
 	print("SecretId:")
 	fmt.Scanln(&secretId)
 	print("SecretKey:")
-	fmt.Scanln(&secretKey)
+	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		panic(err)
+	}
+	secretKey = string(bytePassword)
+
 	if secretId == "" || secretKey == "" {
 		println("Empty SecretId or SecretKey, please retry")
 		return nil
@@ -64,7 +71,7 @@ func InputCosConfig(bucket string) *CosConfig {
 		SecretId:  secretId,
 		SecretKey: secretKey,
 	}
-	err := UpdateBucketConfig(bucket, cosConfig)
+	err = UpdateBucketConfig(bucket, cosConfig)
 	if err != nil {
 		panic(err)
 	}
